@@ -9,8 +9,8 @@ client.on('ready', () => {
     client.user.setStatus('dnd');
     //Mostramos el estado del bot
     console.log(client.user.presence.status);
-    //Guardamos un canal concreto por si el bot está en varios canales
 
+    //Guardamos un canal concreto por si el bot está en varios canales
     /*client.channels.fetch('749700359370309724')
         .then(channel => {
             testCha = channel;
@@ -21,9 +21,9 @@ client.on('ready', () => {
 });
 
 //Hay que poner el token que te da discord
-client.login('token');
+client.login('Token');
 
-client.on('message', async message => {
+client.on('message', message => {
     //console.log(message.content);
 
     //Si dices ping responde pong!
@@ -37,7 +37,7 @@ client.on('message', async message => {
     }
 
 
-    //Da info inútil
+    //Comparte link
     if (message.content === '!chickles') {
         message.channel.send('https://info.mercadona.es/es/consejos/alimentacion/chicles-con-100-xilitol-complementa-tu-cuidado-dental/tip');
     }
@@ -48,8 +48,8 @@ client.on('message', async message => {
     }
 
     //Simplemente para testear
-    if (message.content.startsWith('!test')) {
-        message.channel.send('Respuesta test');
+    if (message.content.startsWith('!info')) {
+        message.channel.send('Esto es un bot de prueba');
     }
 
     //Para probar la edición de mensajes
@@ -68,22 +68,32 @@ client.on('message', async message => {
 
     //Borra los mensajes del chat
     if (message.content === '!clear') {
-
-        try {
-            const fetched = await message.channel.messages.fetch();
-            message.channel.bulkDelete(fetched);
-            message.channel.send("Borrados todos los mensajes");
-        } catch (err) {
-            message.channel.send("No se pudieron borrar los mensajes");
-            console.log(err);
-        }
-
+        clear(message);
     }
 
 });
 
 //Coge un chiste random de la API y lo envía
 async function chiste(msg) {
-    const { joke } = await fetch('https://sv443.net/jokeapi/v2/joke/Any?type=single').then(response => response.json());
-    msg.channel.send(joke);
+    const joke = await fetch('https://sv443.net/jokeapi/v2/joke/Any').then(response => response.json());
+    //Los chistes pueden tener una o dos partes, por lo tanto le damos diferente comportamiento
+    if (joke.type === "single") {
+        msg.channel.send(joke.joke);
+    } else {
+        msg.channel.send(joke.setup);
+        msg.channel.send(joke.delivery);
+    }
+
+}
+
+//Borra los mensajes
+async function clear(msg) {
+    try {
+        const fetched = await msg.channel.messages.fetch();
+        msg.channel.bulkDelete(fetched);
+        msg.channel.send("Borrados todos los mensajes");
+    } catch (err) {
+        msg.channel.send("No se pudieron borrar los mensajes");
+        console.log(err);
+    }
 }
