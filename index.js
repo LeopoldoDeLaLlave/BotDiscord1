@@ -19,15 +19,16 @@ client.on('ready', () => {
 
 });
 
-client.login('NzQ5NzAwNjg0MDc2ODEwMzUw.X0vzKw.DVW3DUvfUVbYF8Q2BZeJLw2EtW0');
+//Hay que poner el token que te da discord
+client.login('Token');
 
 client.on('message', async message => {
-    console.log(message.content);
+    //console.log(message.content);
     if (message.content === 'ping') {
         message.reply('Pong!');
     }
     if (message.content === 'Hola') {
-        message.channel.send(`Hola, ${msg.author}`);
+        message.channel.send(`Hola, ${message.author}`);
     }
 
 
@@ -54,9 +55,16 @@ client.on('message', async message => {
     }
 
     if (message.content === '!clear') {
-       const fetched = await message.channel.messages.fetch({limit: 100});
-       message.channel.bulkDelete(fetched);
-       console.log("mensajes borrados");
+
+        try {
+            const fetched = await message.channel.messages.fetch();
+            message.channel.bulkDelete(fetched);
+            message.channel.send("Borrados todos los mensajes");
+        } catch(err){
+            message.channel.send("No se pudieron borrar los mensajes");
+            console.log(err);
+        }
+
     }
 
 });
